@@ -3,188 +3,185 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using fans;
 
 namespace fans
 {
+
     public class State
     {
-        public string Name;
-        public Dictionary<char, State> Transitions;
-        public bool IsAcceptState;
+        public string name;
+        public Dictionary<char, State> Transit;
+        public bool isFinal;
     }
 
 
     public class FA1
     {
-        public static State a = new State()
-        {
-            Name = "a",
-            Transitions = new Dictionary<char, State>(),
-            IsAcceptState = false
-        };
-        public static State b = new State()
-        {
-            Name = "b",
-            Transitions = new Dictionary<char, State>(),
-            IsAcceptState = false
 
-        };
-        public static State c = new State()
-        {
-            Name = "c",
-            Transitions = new Dictionary<char, State>(),
-            IsAcceptState = true
-        };
-        public static State d = new State()
-        {
-            Name = "d",
-            Transitions = new Dictionary<char, State>(),
-            IsAcceptState = false
-        };
-        public static State e = new State()
-        {
-            Name = "e",
-            Transitions = new Dictionary<char, State>(),
-            IsAcceptState = false
-        };
-        State startState = a;
+
+        public static State q0state;
+        public State q1state;
+        public State q2state;
+        public State q3state;
+        public State q4state;
+
+
         public FA1()
         {
-            a.Transitions['0'] = b;
-            a.Transitions['1'] = d;
-            b.Transitions['0'] = e;
-            b.Transitions['1'] = c;
-            c.Transitions['0'] = e;
-            c.Transitions['1'] = c;
-            d.Transitions['0'] = c;
-            d.Transitions['1'] = d;
-            e.Transitions['0'] = e;
-            e.Transitions['1'] = e;
+            q0state = new State()
+            {
+                name = "q0", Transit = new Dictionary<char, State>(), isFinal = false
+            };
+            q1state = new State()
+            {
+                name = "q1", Transit = new Dictionary<char, State>(), isFinal = false
+            };
+            q2state = new State()
+            {
+                name = "q2", Transit = new Dictionary<char, State>(), isFinal = true
+            };
+            q3state = new State()
+            {
+                name = "q3", Transit = new Dictionary<char, State>(), isFinal = false
+            };
+            q4state = new State()
+            {
+                name = "q4", Transit = new Dictionary<char, State>(), isFinal = false
+            };
+
+            q0state.Transit.Add('0', q2state);
+            q0state.Transit.Add('1', q3state);
+            q1state.Transit.Add('0', q4state);
+            q1state.Transit.Add('1', q2state);
+            q2state.Transit.Add('0', q4state);
+            q2state.Transit.Add('1', q2state);
+            q3state.Transit.Add('0', q2state);
+            q3state.Transit.Add('1', q3state);
+            q4state.Transit.Add('0', q4state);
+            q4state.Transit.Add('1', q4state);
+
         }
+
         public bool? Run(IEnumerable<char> s)
         {
-            State current = startState;
-            foreach (char c in s)
+
+            State cur = q0state;
+            foreach (var c in s)
             {
-                current = current.Transitions[c];
-                if (startState == null)
+                cur = cur.Transit[c]; // меняем состояние на то, в которое у нас переход
+                if (cur == null) // если его нет, возвращаем признак ошибки
                     return null;
             }
-            return current.IsAcceptState;
+
+            return cur.isFinal;
         }
     }
 
+
     public class FA2
     {
-        public static State a = new State()
-        {
-            Name = "a",
-            Transitions = new Dictionary<char, State>(),
-            IsAcceptState = false
-        };
-        public static State b = new State()
-        {
-            Name = "b",
-            Transitions = new Dictionary<char, State>(),
-            IsAcceptState = false
+        public static State q0state;
+        public State q1state;
+        public State q2state;
+        public State q3state;
 
-        };
-        public static State c = new State()
-        {
-            Name = "c",
-            Transitions = new Dictionary<char, State>(),
-            IsAcceptState = false
-        };
-        public static State d = new State()
-        {
-            Name = "d",
-            Transitions = new Dictionary<char, State>(),
-            IsAcceptState = true
-        };
-
-        State startState = a;
         public FA2()
         {
-            a.Transitions['0'] = b;
-            a.Transitions['1'] = c;
-            b.Transitions['0'] = a;
-            b.Transitions['1'] = d;
-            c.Transitions['0'] = d;
-            c.Transitions['1'] = a;
-            d.Transitions['0'] = c;
-            d.Transitions['1'] = b;
+            q0state = new State()
+            {
+                name = "q0", Transit = new Dictionary<char, State>(), isFinal = false
+            };
+            q1state = new State()
+            {
+                name = "q1", Transit = new Dictionary<char, State>(), isFinal = false
+            };
+            q2state = new State()
+            {
+                name = "q2", Transit = new Dictionary<char, State>(), isFinal = false
+            };
+            q3state = new State()
+            {
+                name = "q3", Transit = new Dictionary<char, State>(), isFinal = true
+            };
+            q0state.Transit.Add('0', q2state);
+            q0state.Transit.Add('1', q1state);
+            q1state.Transit.Add('0', q3state);
+            q1state.Transit.Add('1', q0state);
+            q2state.Transit.Add('0', q0state);
+            q2state.Transit.Add('1', q3state);
+            q3state.Transit.Add('0', q1state);
+            q3state.Transit.Add('1', q2state);
         }
         public bool? Run(IEnumerable<char> s)
-        {
-            State current = startState;
-            foreach (char c in s)
+        {   State cur = q0state;
+            foreach (var c in s)
             {
-                current = current.Transitions[c];
-                if (startState == null)
+                cur = cur.Transit[c]; // меняем состояние на то, в которое у нас переход
+                if (cur == null) // если его нет, возвращаем признак ошибки
                     return null;
             }
-            return current.IsAcceptState;
-        }
+
+            return cur.isFinal;}
     }
 
     public class FA3
     {
-        public static State a = new State()
-        {
-            Name = "a",
-            Transitions = new Dictionary<char, State>(),
-            IsAcceptState = false
-        };
-        public static State b = new State()
-        {
-            Name = "b",
-            Transitions = new Dictionary<char, State>(),
-            IsAcceptState = false
+        public static State q0state;
+        public State q1state;
+        public State q2state;
 
-        };
-        public static State c = new State()
-        {
-            Name = "c",
-            Transitions = new Dictionary<char, State>(),
-            IsAcceptState = true
-        };
-        State startState = a;
         public FA3()
         {
-            a.Transitions['0'] = a;
-            a.Transitions['1'] = b;
-            b.Transitions['0'] = a;
-            b.Transitions['1'] = c;
-            c.Transitions['0'] = c;
-            c.Transitions['1'] = c;
+            q0state = new State()
+            {
+                name = "q0", Transit = new Dictionary<char, State>(), isFinal = false
+            };
+            q1state = new State()
+            {
+                name = "q1", Transit = new Dictionary<char, State>(), isFinal = false
+            };
+            q2state = new State()
+            {
+                name = "q2", Transit = new Dictionary<char, State>(), isFinal = true
+            };
+            q0state.Transit.Add('0', q0state);
+            q0state.Transit.Add('1', q1state);
+            q1state.Transit.Add('0', q0state);
+            q1state.Transit.Add('1', q2state);
+            q2state.Transit.Add('0', q2state);
+            q2state.Transit.Add('1', q2state);
         }
+
         public bool? Run(IEnumerable<char> s)
         {
-            State current = startState;
-            foreach (char c in s)
+            State cur = q0state;
+            foreach (var c in s)
             {
-                current = current.Transitions[c];
-                if (startState == null)
+                cur = cur.Transit[c]; // меняем состояние на то, в которое у нас переход
+                if (cur == null) // если его нет, возвращаем признак ошибки
                     return null;
             }
-            return current.IsAcceptState;
-        }
+
+            return cur.isFinal;}
     }
 
     class Program
     {
         static void Main(string[] args)
         {
-            String s = "01111";
-            FA1 fa1 = new FA1();
-            bool? result1 = fa1.Run(s);
+            String s = "0101";
+            FA1 faa1 = new FA1();
+            bool? result1 = faa1.Run(s);
             Console.WriteLine(result1);
-            FA2 fa2 = new FA2();
-            bool? result2 = fa2.Run(s);
+            FA2 faa2 = new FA2();
+            bool? result2 = faa2.Run(s);
             Console.WriteLine(result2);
-            FA3 fa3 = new FA3();
-            bool? result3 = fa3.Run(s);
+            FA3 faa3 = new FA3();
+            bool? result3 = faa3.Run(s);
             Console.WriteLine(result3);
         }
     }
-}
+}    
+    
+    
